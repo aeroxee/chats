@@ -1,0 +1,45 @@
+<html>
+<head>
+	<title>Chat</title>
+</head>
+<body>
+	<h1>Room {{ .roomid }}</h1>
+
+	<textarea id="logs" rows="10" cols="60"></textarea> <br>
+	<input id="chat-message-input" type="text" placeholder="Enter message"> <br>
+    <input type="submit" id="chat-message-submit" value="Send">
+
+    <script>
+        document.querySelector("#chat-message-input").focus();
+        
+        const ws = new WebSocket(
+            "ws://" + 
+            window.location.host + 
+            "/ws?roomid={{ .roomid }}"
+        );
+
+        ws.onopen = e => {
+            console.log(e);
+        };
+
+        ws.onmessage = e => {
+            var data = JSON.parse(e.data);
+
+            document.querySelector("#logs").value += data.from + " | " + data.timestamp + " : " + data.text + "\n";
+        }
+
+        document.querySelector("#chat-message-submit").addEventListener("click", e => {
+            var messageDOM = document.querySelector("#chat-message-input");
+            var message = messageDOM.value;
+            
+            ws.send(JSON.stringify({
+                "from": "{{ .user }}",
+                "text": message,
+            }))
+
+            messageDOM.value = "";
+            messageDOM.focus();
+        })
+    </script>
+</body>
+</html>

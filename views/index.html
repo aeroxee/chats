@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <h5>What would you like room to enter?</h5>
+    <input type="text" id="room-input" autofocus> <br>
+    <input type="button" id="room-submit" value="Send">
+
+    <script>
+        document.querySelector("#room-submit").addEventListener("click", e => {
+            var roomid = document.querySelector("#room-input").value;
+            
+            if (roomid == "") {
+                alert("Please enter the room name!!!");
+            } else {
+                window.location.href = "/room?roomid=" + roomid;
+            }
+        });
+    </script>
+</body>
+</html>
