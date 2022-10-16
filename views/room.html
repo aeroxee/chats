@@ -1,16 +1,69 @@
 <html>
 <head>
 	<title>Chat</title>
+    <style>
+        body {
+            min-width: 100vh;
+        }
+        #logs {
+            margin: 0 auto;
+            width: 60%;
+            border: 1px solid #eee;
+            height: 400px;
+            overflow: auto;
+        }
+
+        #logs .right {
+            width: 70%;
+            float: right;
+            padding: 5px;
+            border: 1px solid red;
+            margin-bottom: 1rem;
+        }
+
+        #logs .left {
+            width: 70%;
+            float: left;
+            padding: 5px;
+            border: 1px solid cyan;
+            margin-bottom: 1rem;
+        }
+
+        #form {
+            margin: 0 auto;
+            width: 60%;
+        }
+    </style>
 </head>
 <body>
 	<h1>Room {{ .roomid }}</h1>
 
-	<textarea id="logs" rows="10" cols="60"></textarea> <br>
-	<input id="chat-message-input" type="text" placeholder="Enter message"> <br>
-    <input type="submit" id="chat-message-submit" value="Send">
+	<div id="logs"></div>
+	<div id="form">
+        <input id="chat-message-input" type="text" placeholder="Enter message"> <br>
+        <input type="button" id="chat-message-submit" value="Send">
+    </div>
 
     <script>
         document.querySelector("#chat-message-input").focus();
+
+        var logs = document.querySelector("#logs");
+
+        function appendLog(item) {
+            var doScroll = logs.scrollTop > logs.scrollHeight - logs.clientHeight -1;
+            logs.appendChild(item);
+            if (doScroll) {
+                logs.scrollTop = logs.scrollHeight - logs.clientHeight;
+            }
+        }
+
+        function isUser(user1, user2) {
+            if (user1 == user2) {
+                return true
+            } else {
+                return false
+            }
+        }
         
         const ws = new WebSocket(
             "ws://" + 
@@ -25,7 +78,19 @@
         ws.onmessage = e => {
             var data = JSON.parse(e.data);
 
-            document.querySelector("#logs").value += data.from + " | " + data.timestamp + " : " + data.text + "\n";
+            if (isUser("{{ .user }}", data.from)) {
+                var div = document.createElement("div");
+                div.classList.add("right");
+                div.innerHTML = "<strong>" + "You" + " | " + data.timestamp + "</strong> : " + data.text;
+
+                appendLog(div);
+            } else {
+                var div = document.createElement("div");
+                div.classList.add("left");
+                div.innerHTML = "<strong>" + data.from + " | " + data.timestamp + "</strong> : " + data.text;
+
+                appendLog(div);
+            }
         }
 
         document.querySelector("#chat-message-submit").addEventListener("click", e => {

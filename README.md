@@ -6,4 +6,4 @@ Chats is a simple chat application built with Go programming. This project was b
 
 Below is a screenshot of the project execution results.
 
-![Screenshot](img/Screenshot_20221017_024228.png)
+![Screenshot](img/Screenshot_20221017_031028.png)
