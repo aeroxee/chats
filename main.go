@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"math/rand"
 	"net/http"
 	"path"
@@ -52,5 +53,6 @@ func main() {
 		}
 	})
 
+	log.Println("server running on port 8000...")
 	http.ListenAndServe(":8000", nil)
 }
